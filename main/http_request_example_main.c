@@ -24,8 +24,35 @@
 #include "sdkconfig.h"
 #include "../litechain/MODULE/MODULE_CFG.h"
 #include <stdio.h>
-
+#include "cJSON.h"
 static const char *TAG = "example";
+
+
+char* get_json(char* str) {
+    char *start, *end;
+
+    // 寻找开始和结束的指针
+    start = strchr(str, '{');
+    end = strrchr(str, '}');
+
+    // 如果没有找到，返回NULL
+    if (!start || !end) {
+        return NULL;
+    }
+
+    // 计算json长度，并分配内存
+    int json_len = end - start + 2;  // 加2是为了拷贝结束字符'}'和'\0'
+    char* json = malloc(json_len * sizeof(char));
+    if (json == NULL) {
+        return NULL;
+    }
+
+    // 拷贝json到新分配的内存
+    strncpy(json, start, json_len - 1);
+    json[json_len - 1] = '\0';
+
+    return json;
+}
 
 void app_main(void)
 {
@@ -35,8 +62,18 @@ void app_main(void)
     ESP_ERROR_CHECK(esp_event_loop_create_default());
 
     ESP_ERROR_CHECK(example_connect());
-
+#if 1
 	LLM *llm;
 	llm = Openai_init("gpt-3.5-turbo-16k-0613",0.1,16*1024,"sk-q6iEheCNMGxHlhQd04702713Ba7143A28997D1C2F9A32a27","api1.t-chat.cn");
-	ESP_LOGI(TAG,"return data:%s",llm->run("/v1/chat/completions","Introduction to Wuhan?"));
+	char *chat_data =llm->run("/v1/chat/completions","Introduction to Wuhan?");
+	ESP_LOGI(TAG,"return data:%s",chat_data);
+#endif
+	char* json = get_json(chat_data);
+#if 1
+    cJSON* root = cJSON_Parse(json);
+    cJSON *name = cJSON_GetObjectItem(root, "name");
+    if (name != NULL && name->type == cJSON_String) {
+        printf("Name: %s\n", name->valuestring);
+    }
+#endif
 }
