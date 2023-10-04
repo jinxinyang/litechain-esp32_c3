@@ -28,7 +28,8 @@
 static const char *TAG = "example";
 
 
-char* get_json(char* str) {
+char* get_json(char* str)
+{
     char *start, *end;
 
     // 寻找开始和结束的指针
@@ -36,22 +37,13 @@ char* get_json(char* str) {
     end = strrchr(str, '}');
 
     // 如果没有找到，返回NULL
-    if (!start || !end) {
+    if (!start || !end)
+    {
         return NULL;
     }
 
-    // 计算json长度，并分配内存
-    int json_len = end - start + 2;  // 加2是为了拷贝结束字符'}'和'\0'
-    char* json = malloc(json_len * sizeof(char));
-    if (json == NULL) {
-        return NULL;
-    }
-
-    // 拷贝json到新分配的内存
-    strncpy(json, start, json_len - 1);
-    json[json_len - 1] = '\0';
-
-    return json;
+    end[1] = '\0';
+    return start;
 }
 
 void app_main(void)
@@ -69,11 +61,54 @@ void app_main(void)
 	ESP_LOGI(TAG,"return data:%s",chat_data);
 #endif
 	char* json = get_json(chat_data);
+
+	if(json != NULL)
+	{
+		ESP_LOGI(TAG,"json data:%s",json);
+	}
+	else
+	{
+		ESP_LOGI(TAG,"json data Incomplete");
+	}
+
 #if 1
+	cJSON_InitHooks(0);
     cJSON* root = cJSON_Parse(json);
-    cJSON *name = cJSON_GetObjectItem(root, "name");
-    if (name != NULL && name->type == cJSON_String) {
-        printf("Name: %s\n", name->valuestring);
+    if (root == NULL)
+    {
+    	ESP_LOGI(TAG,"Failed to parse JSON\n");
     }
+
+    cJSON* choices_array = cJSON_GetObjectItem(root, "choices");
+    if (choices_array == NULL || !cJSON_IsArray(choices_array))
+    {
+    	ESP_LOGI(TAG,"Invalid JSON format\n");
+        cJSON_Delete(root);
+    }
+
+    cJSON* choice_object = cJSON_GetArrayItem(choices_array, 0);
+    if (choice_object == NULL || !cJSON_IsObject(choice_object))
+    {
+    	ESP_LOGI(TAG,"Invalid JSON format\n");
+        cJSON_Delete(root);
+    }
+
+    cJSON* message_object = cJSON_GetObjectItem(choice_object, "message");
+    if (message_object == NULL || !cJSON_IsObject(message_object))
+    {
+    	ESP_LOGI(TAG,"Invalid JSON format\n");
+        cJSON_Delete(root);
+    }
+
+    cJSON* content_string = cJSON_GetObjectItem(message_object, "content");
+    if (content_string == NULL || !cJSON_IsString(content_string))
+    {
+    	ESP_LOGI(TAG,"Invalid JSON format\n");
+        cJSON_Delete(root);
+    }
+
+    ESP_LOGI(TAG,"Content: %s\n", content_string->valuestring);
+
+    cJSON_Delete(root);
 #endif
 }
