@@ -24,91 +24,26 @@
 #include "sdkconfig.h"
 #include "../litechain/MODULE/MODULE_CFG.h"
 #include <stdio.h>
-#include "cJSON.h"
-static const char *TAG = "example";
-
-
-char* get_json(char* str)
-{
-    char *start, *end;
-
-    // 寻找开始和结束的指针
-    start = strchr(str, '{');
-    end = strrchr(str, '}');
-
-    // 如果没有找到，返回NULL
-    if (!start || !end)
-    {
-        return NULL;
-    }
-
-    end[1] = '\0';
-    return start;
-}
 
 void app_main(void)
 {
-
     ESP_ERROR_CHECK(nvs_flash_init());
     ESP_ERROR_CHECK(esp_netif_init());
     ESP_ERROR_CHECK(esp_event_loop_create_default());
 
     ESP_ERROR_CHECK(example_connect());
-#if 1
 	LLM *llm;
 	llm = Openai_init("gpt-3.5-turbo-16k-0613",0.1,16*1024,"sk-q6iEheCNMGxHlhQd04702713Ba7143A28997D1C2F9A32a27","api1.t-chat.cn");
-	char *chat_data =llm->run("/v1/chat/completions","Introduction to Wuhan?");
-	ESP_LOGI(TAG,"return data:%s",chat_data);
-#endif
-	char* json = get_json(chat_data);
-
-	if(json != NULL)
+	if(llm == 0)
 	{
-		ESP_LOGI(TAG,"json data:%s",json);
-	}
-	else
-	{
-		ESP_LOGI(TAG,"json data Incomplete");
+		printf("llm init fail");
 	}
 
-#if 1
-	cJSON_InitHooks(0);
-    cJSON* root = cJSON_Parse(json);
-    if (root == NULL)
-    {
-    	ESP_LOGI(TAG,"Failed to parse JSON\n");
-    }
+	char *prompt = "Introduction to Beijing?(Answers are all in English)";
 
-    cJSON* choices_array = cJSON_GetObjectItem(root, "choices");
-    if (choices_array == NULL || !cJSON_IsArray(choices_array))
-    {
-    	ESP_LOGI(TAG,"Invalid JSON format\n");
-        cJSON_Delete(root);
-    }
+	char *chat_data =llm->run("/v1/chat/completions",prompt);
+	//printf("return data:%s",chat_data);
 
-    cJSON* choice_object = cJSON_GetArrayItem(choices_array, 0);
-    if (choice_object == NULL || !cJSON_IsObject(choice_object))
-    {
-    	ESP_LOGI(TAG,"Invalid JSON format\n");
-        cJSON_Delete(root);
-    }
+	printf("ai:%s",OutputParserJson(chat_data,"choices","0","message","content",NULL));
 
-    cJSON* message_object = cJSON_GetObjectItem(choice_object, "message");
-    if (message_object == NULL || !cJSON_IsObject(message_object))
-    {
-    	ESP_LOGI(TAG,"Invalid JSON format\n");
-        cJSON_Delete(root);
-    }
-
-    cJSON* content_string = cJSON_GetObjectItem(message_object, "content");
-    if (content_string == NULL || !cJSON_IsString(content_string))
-    {
-    	ESP_LOGI(TAG,"Invalid JSON format\n");
-        cJSON_Delete(root);
-    }
-
-    ESP_LOGI(TAG,"Content: %s\n", content_string->valuestring);
-
-    cJSON_Delete(root);
-#endif
 }
