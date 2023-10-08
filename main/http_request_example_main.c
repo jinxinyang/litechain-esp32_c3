@@ -25,15 +25,13 @@
 #include "../litechain/MODULE/MODULE_CFG.h"
 #include <stdio.h>
 
-void app_main(void)
-{
-    ESP_ERROR_CHECK(nvs_flash_init());
-    ESP_ERROR_CHECK(esp_netif_init());
-    ESP_ERROR_CHECK(esp_event_loop_create_default());
+char *api_key = "sk-q6iEheCNMGxHlhQd04702713Ba7143A28997D1C2F9A32a27";
+char *api_base = "api1.t-chat.cn";
 
-    ESP_ERROR_CHECK(example_connect());
+void llm_simple_test(void)
+{
 	LLM *llm;
-	llm = Openai_init("gpt-3.5-turbo-16k-0613",0.1,16*1024,"sk-q6iEheCNMGxHlhQd04702713Ba7143A28997D1C2F9A32a27","api1.t-chat.cn");
+	llm = Openai_init("gpt-3.5-turbo-16k-0613",0.1,16*1024,api_key,api_base);
 	if(llm == 0)
 	{
 		printf("llm init fail");
@@ -42,8 +40,39 @@ void app_main(void)
 	char *prompt = "Introduction to Beijing?(Answers are all in English)";
 
 	char *chat_data =llm->run("/v1/chat/completions",prompt);
-	//printf("return data:%s",chat_data);
 
-	printf("ai:%s",OutputParserJson(chat_data,"choices","0","message","content",NULL));
+	printf("http read data:%s\n",chat_data);
 
+	printf("ai:%s\n",OutputParserJson(chat_data,"choices","0","message","content",NULL));
+}
+
+void prompt_simple_test(void)
+{
+	LLM *llm;
+	llm = Openai_init("gpt-3.5-turbo-16k-0613",0.1,16*1024,api_key,api_base);
+	if(llm == 0)
+	{
+		printf("llm init fail");
+	}
+
+	const char* tour_introduction = "%s's tour introduction, recommend the corresponding %s";
+
+	char *prompt = prompt_format(tour_introduction,"wuhan","Famous person of history");
+
+	char *chat_data =llm->run("/v1/chat/completions",prompt);
+
+	printf("http read data:%s\n",chat_data);
+
+	printf("ai:%s\n",OutputParserJson(chat_data,"choices","0","message","content",NULL));
+}
+
+void app_main(void)
+{
+    ESP_ERROR_CHECK(nvs_flash_init());
+    ESP_ERROR_CHECK(esp_netif_init());
+    ESP_ERROR_CHECK(esp_event_loop_create_default());
+
+    ESP_ERROR_CHECK(example_connect());
+	//llm_simple_test();
+	prompt_simple_test();
 }
