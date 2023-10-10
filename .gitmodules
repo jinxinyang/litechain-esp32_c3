@@ -1,0 +1,3 @@
+[submodule "litechain"]
+	path = litechain
+	url = C:/Users/jinxinyang/Desktop/litechain-hub/litechain-esp32_c3/litechain
