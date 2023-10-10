@@ -23,10 +23,11 @@
 #include "lwip/dns.h"
 #include "sdkconfig.h"
 #include "../litechain/MODULE/MODULE_CFG.h"
+#include "litechain_cfg.h"
 #include <stdio.h>
 
-char *api_key = "sk-q6iEheCNMGxHlhQd04702713Ba7143A28997D1C2F9A32a27";
-char *api_base = "api1.t-chat.cn";
+char *api_key = API_KEY;
+char *api_base = API_BASE;
 
 void llm_simple_test(void)
 {
