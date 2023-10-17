@@ -23,6 +23,7 @@
 #include "lwip/dns.h"
 #include "sdkconfig.h"
 #include "../litechain/MODULE/MODULE_CFG.h"
+#include "../litechain/APP/CLI/CLI.h"
 #include "litechain_cfg.h"
 #include <stdio.h>
 
@@ -67,6 +68,30 @@ void prompt_simple_test(void)
 	printf("ai:%s\n",OutputParserJson(chat_data,"choices","0","message","content",NULL));
 }
 
+void llm_chatgml2_6b_simple_test(void)
+{
+	LLM *llm;
+	llm = Chatgml_init("chatgml2-6b",0.1,16*1024,api_key,api_base);
+	if(llm == 0)
+	{
+		printf("llm init fail");
+	}
+
+	char *prompt = "Introduction to Beijing?(Answers are all in English)";
+
+	char *chat_data =llm->run("/v1",prompt);
+
+	printf("http read data:%s\n",chat_data);
+
+	printf("ai:%s\n",OutputParserJson(chat_data,"choices","0","message","content",NULL));
+}
+
+
+void cli_parse_test(void)
+{
+	CLI_PARSE_TASK(CLI_COMM_UART);
+}
+
 void app_main(void)
 {
     ESP_ERROR_CHECK(nvs_flash_init());
@@ -75,5 +100,7 @@ void app_main(void)
 
     ESP_ERROR_CHECK(example_connect());
 	//llm_simple_test();
-	prompt_simple_test();
+	//prompt_simple_test();
+	//cli_parse_test();
+
 }

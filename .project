@@ -1539,16 +1539,6 @@
 			<location>C:/Espressif/frameworks/esp-idf-v5.0.2/components/esp_system/port/panic_handler.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/esp_system/task_wdt/task_wdt.c</name>
-			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.0.2/components/esp_system/task_wdt/task_wdt.c</location>
-		</link>
-		<link>
-			<name>build/ide/esp_idf_components/esp_system/task_wdt/task_wdt_impl_timergroup.c</name>
-			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.0.2/components/esp_system/task_wdt/task_wdt_impl_timergroup.c</location>
-		</link>
-		<link>
 			<name>build/ide/esp_idf_components/esp_timer/src/esp_timer.c</name>
 			<type>1</type>
 			<location>C:/Espressif/frameworks/esp-idf-v5.0.2/components/esp_timer/src/esp_timer.c</location>
