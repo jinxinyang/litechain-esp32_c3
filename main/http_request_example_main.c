@@ -23,7 +23,7 @@
 #include "lwip/dns.h"
 #include "sdkconfig.h"
 #include "../litechain/MODULE/MODULE_CFG.h"
-#include "../litechain/APP/CLI/CLI.h"
+//#include "../litechain/APP/CLI/CLI.h"
 #include "litechain_cfg.h"
 #include <stdio.h>
 
@@ -33,7 +33,7 @@ char *api_base = API_BASE;
 void llm_simple_test(void)
 {
 	LLM *llm;
-	llm = Openai_init("gpt-3.5-turbo-16k-0613",0.1,16*1024,api_key,api_base);
+	llm = Openai_init("gpt-3.5-turbo",0.1,16*1024,api_key,api_base);
 	if(llm == 0)
 	{
 		printf("llm init fail");
@@ -45,13 +45,13 @@ void llm_simple_test(void)
 
 	printf("http read data:%s\n",chat_data);
 
-	printf("ai:%s\n",OutputParserJson(chat_data,"choices","0","message","content",NULL));
+	/*printf("ai:%s\n",OutputParserJson(chat_data,"choices","0","message","content",NULL));*/
 }
 
-void prompt_simple_test(void)
+/*void prompt_simple_test(void)
 {
 	LLM *llm;
-	llm = Openai_init("gpt-3.5-turbo-16k-0613",0.1,16*1024,api_key,api_base);
+	llm = Openai_init("gpt-3.5-turbo",0.1,16*1024,api_key,api_base);
 	if(llm == 0)
 	{
 		printf("llm init fail");
@@ -66,9 +66,9 @@ void prompt_simple_test(void)
 	printf("http read data:%s\n",chat_data);
 
 	printf("ai:%s\n",OutputParserJson(chat_data,"choices","0","message","content",NULL));
-}
+}*/
 
-void llm_chatgml2_6b_simple_test(void)
+/*void llm_chatgml2_6b_simple_test(void)
 {
 	LLM *llm;
 	llm = Chatgml_init("chatgml2-6b",0.1,16*1024,api_key,api_base);
@@ -84,13 +84,13 @@ void llm_chatgml2_6b_simple_test(void)
 	printf("http read data:%s\n",chat_data);
 
 	printf("ai:%s\n",OutputParserJson(chat_data,"choices","0","message","content",NULL));
-}
+}*/
 
 
-void cli_parse_test(void)
+/*void cli_parse_test(void)
 {
 	CLI_PARSE_TASK(CLI_COMM_UART);
-}
+}*/
 
 void app_main(void)
 {
@@ -99,8 +99,11 @@ void app_main(void)
     ESP_ERROR_CHECK(esp_event_loop_create_default());
 
     ESP_ERROR_CHECK(example_connect());
-	//llm_simple_test();
+	llm_simple_test();
 	//prompt_simple_test();
 	//cli_parse_test();
-
+	while (true)
+	{
+    	vTaskDelay(pdMS_TO_TICKS(1000));
+	}
 }

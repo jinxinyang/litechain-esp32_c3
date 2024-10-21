@@ -1,0 +1,15 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"mcal_wifi.h": "c",
+			"sdkconfig.h": "c",
+			"module_cfg.h": "c",
+			"mcal_core.h": "c"
+		}
+	}
+}
